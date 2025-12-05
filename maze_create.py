@@ -3,13 +3,13 @@ import sys
 import os
 import random
 
-import cv2
-import numpy as np
+import cv2 # 画像処理
+import numpy as np # 配列処理
 
 # Debug時書き換える部分
 IMAGE_PATH = "target_image.png"
 
-
+# 画像を読み込んで、「掘っていい場所」を True/False のマスクに変換
 def load_mask(path: str, thresh: int = 200) -> np.ndarray:
     abs_path = os.path.abspath(path)
     if not os.path.exists(path):
@@ -30,7 +30,7 @@ def load_mask(path: str, thresh: int = 200) -> np.ndarray:
     mask = bin_img == 255
     return mask
 
-
+# ピクセル単位のマスクを、セル単位のグリッドに縮める
 def resize_mask_to_cells(mask: np.ndarray, target_long_side_cells: int) -> np.ndarray:
     h, w = mask.shape
     if h >= w:
@@ -46,7 +46,7 @@ def resize_mask_to_cells(mask: np.ndarray, target_long_side_cells: int) -> np.nd
     cell_mask = resized > 0  
     return cell_mask
 
-
+# DFSで、セルマスクから実際の迷路構造を作る
 def generate_maze(cell_mask: np.ndarray) -> np.ndarray:
     h_cells, w_cells = cell_mask.shape
 
@@ -93,7 +93,7 @@ def generate_maze(cell_mask: np.ndarray) -> np.ndarray:
 
     return maze
 
-
+# 生成した配列を画像として保存
 def save_maze(maze: np.ndarray, out_path: str, scale: int = 4) -> None:
     h, w = maze.shape
     if scale > 1:
@@ -146,15 +146,18 @@ def main():
         try:
             detail = int(sys.argv[1])
         except ValueError:
+            # 数字以外のエラー
             print("Usage: python maze_main.py [1-100]", file=sys.stderr)
             sys.exit(1)
 
         if not (1 <= detail <= 100):
+            # 無効な引数はエラー
             print("Error: detail must be between 1 and 100", file=sys.stderr)
             sys.exit(1)
 
         run_with_detail(detail)
     else:
+        # 使い方の表示
         print("Usage:", file=sys.stderr)
         print("  python maze_main.py          # 粗い＋細かい迷路を生成", file=sys.stderr)
         print("  python maze_main.py N        # N=1〜100 の細かさで1枚生成", file=sys.stderr)
