@@ -1,14 +1,7 @@
-# =========================================
-#  Maze Generator - Makefile
-# =========================================
-
 PYTHON     := python3
 DOCKER_IMG := maze-image
 
-# -----------------------------------------
-#  ローカル実行（mac / Linux）
-# -----------------------------------------
-# 引数なし（粗い＋細かい）
+# 
 run:
 	$(PYTHON) maze_create.py
 
@@ -24,7 +17,7 @@ run-detail:
 #  Docker
 # -----------------------------------------
 docker-build:
-	docker build -t $(DOCKER_IMG) .
+	docker-compose build -t $(DOCKER_IMG) .
 
 docker-run:
 	docker run --rm -v "$(PWD)":/app $(DOCKER_IMG)
